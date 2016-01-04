@@ -1,0 +1,1 @@
+ModLoader.SetupFileHook( "lua/Alien_Client.lua", "lua/AV_Mod.lua" , "post" )

@@ -1,4 +1,21 @@
+-- Dragon is a god
+-- all 'zero number' ranges must be set to 0.2
+
 local alienVisionEnabled = true
+local alienRanges = { }
+alienRanges["Parasite"] = 0.2
+alienRanges["XenocideLeap"] = 0.2
+alienRanges["SpitSpray"] = 5.3
+alienRanges["BileBomb"] = 0.2
+alienRanges["BabblerAbility"] = 0.2
+alienRanges["Spores"] = 0.2
+alienRanges["LerkUmbra"] = 17
+alienRanges["SwipeBlink"] = 1.6
+alienRanges["StabBlink"] = 1.9
+alienRanges["Gore"] = 2.2 //This is a guess, its changed by viewangle...
+alienRanges["BoneShield"] = 0.2
+alienRanges["Metabolize"] = 0.2
+alienRanges["DropStructureAbility"] = 0.2
 
 function Alien:UpdateClientEffects(deltaTime, isLocal)
 
@@ -48,15 +65,15 @@ function Alien:UpdateClientEffects(deltaTime, isLocal)
         if player ~= nil then
 
             local ability = player:GetActiveWeapon()
-            
-            if ability ~= nil and ability:isa("Ability") and ability:GetRange() ~= nil then
-                range = ability:GetRange()
-                if range == 100 then
-                    range = 0
-                end
-            else
-                range = 0
-            end
+			if ability and ability:isa("Ability") then
+				if alienRanges[ability:GetClassName()] then
+					range = alienRanges[ability:GetClassName()]
+				else
+					range = ability:GetRange()
+				end
+			else
+				range = 0
+			end
             
         end
         
@@ -68,8 +85,8 @@ function Alien:UpdateClientEffects(deltaTime, isLocal)
             useShader:SetParameter("startTime", self.darkVisionTime)
             useShader:SetParameter("time", Shared.GetTime())
             useShader:SetParameter("amount", darkVisionFadeAmount)
-            Print(ToString(range))
-            useShader:SetParameter("range", range)
+            -- Print(ToString(range))
+            useShader:SetParameter("abilityRange", range)
             
         end
         
@@ -78,3 +95,27 @@ function Alien:UpdateClientEffects(deltaTime, isLocal)
     end
     
 end
+
+-- lets you control how bright the bite aid is
+local function SetBiteOpacity(opacityValue)
+
+	local useShader = Player.screenEffects.darkVision
+	local opacity = tonumber(opacityValue)
+	
+    if useShader then
+		-- so if there is no mod default values are 0 in shader and we have to correct for that incase people dont run this mod
+		if IsNumber(opacity) and opacity >= 0 and opacity <= 1 then
+			opacity = math.abs(opacity - 1)
+			useShader:SetParameter("opacityValue", opacity)
+			Shared.Message("Bite Aid opacity value set at: " .. opacityValue)
+		else
+				Shared.Message("Usage: biteaid 0.0-1.0")
+				Shared.Message("You tried: " .. opacityValue)
+				Shared.Message("Setting to default: 1")
+				useShader:SetParameter("opacityValue", 0)
+		end
+    end
+    
+end
+
+ Event.Hook("Console_biteaid", SetBiteOpacity)

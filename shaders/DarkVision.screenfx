@@ -2,7 +2,8 @@ settings =
     [
         { name="amount"         default=0.0 }
         { name="startTime"      default=0.0 }
-        { name="range"          default=0.0 }
+        { name="abilityRange"   default=0.0 }
+		{ name="opacityValue"   default=0.0 }
         { name="depthTexture"  }
         { name="normalTexture" }
     ]
@@ -17,10 +18,12 @@ layers =
             parameters                      = {
                     amount                  = "amount"
                     startTime               = "startTime"
-                    range                   = "range"
+                    abilityRange            = "abilityRange"
+					opacityValue            = "opacityValue"
                     baseTexture             = { resource="source_buffer" linear=true }
                     depthTexture            = { resource="depthTexture" linear=true }
                     normalTexture           = { resource="normalTexture" linear=true }
                 }
-        }      
+        }
     ]
+      
